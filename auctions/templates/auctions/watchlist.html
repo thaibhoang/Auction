@@ -1,0 +1,22 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Your Watchlist</h2>
+    <div class="center">
+        {% if watchlist %}
+            <form action="{% url 'removewatchlist' %}" method="post">
+                {% csrf_token %}
+                {% for item in watchlist %}
+                    <div>
+                        <a href="{% url 'item' item.listing.pk %}">{{item.listing.title}}</a>
+                        <label for="{{item.listing.pk}}">Remove item</label>
+                        <input type="checkbox" name="{{item.listing.pk}}" id="{{item.listing.pk}}">
+                    </div>
+                {% endfor %}
+                <button>Submit change to the watchlist</button>
+            </form>
+        {% else %}
+            <div>You have no item in your watchlist. <a href="{% url 'index' %}">Add one?</a></div>
+        {% endif %}
+    </div>
+{% endblock %}

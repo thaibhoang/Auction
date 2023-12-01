@@ -1,0 +1,81 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>{{item.title}}</h2>
+    {% if isWinner %}
+        <div>You won the aution <a href="#">=> Process your payment now</a></div>
+    {% endif %}
+    <div class="item-detail">
+        <div class="item">
+            <img src="{{item.imageURL}}" alt="product image">
+            <div class="item-infor">
+                <div>Detail: {{item.description}}</div>
+                <div>
+                    Current max bid: $
+                    {% if bid %}
+                        {{bid.bid}}
+                    {% else %}
+                        {{item.startBid}}
+                    {% endif %}
+                </div>
+                <div>
+                    <form action="/{{item.pk}}" method="post">
+                        {% csrf_token %}
+                        <input type="number" placeholder="Bid"
+                        {% if bid %}
+                            min={{bid.bid}}
+                        {% else %}
+                            min={{item.startBid}}
+                        {% endif %}
+                        name="newBid">
+                        <button>Place Your Bid</button>
+                    </form>
+                </div>        
+        
+                <div>
+                    <form action="{% url 'watchlist' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" value="{{item.pk}}" name="item-pk">
+                        <button>Add to watchlist</button>
+                    </form>
+                </div>
+                {% if isOwner %}
+                <div>
+                    <form action="{% url 'closeauction' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" value="{{item.pk}}" name="item-pk">
+                        <button>Close the auctions</button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+            
+        </div>
+        
+        <div>
+            <form action="{% url 'comment' %}" method="post">
+                {% csrf_token %}
+                <div>
+                    <input type="hidden" value="{{item.pk}}" name="item-pk">
+                    <textarea name="comment" rows="3" placeholder="Comment on item"></textarea>
+                </div>
+                <div><button>Add your comment</button></div>
+            </form>
+        </div>
+        <div>
+            <h3>Other Comments:</h3>
+        </div>
+        <div>
+            <ul>
+                {% for comment in comments %}
+                    <li>{{comment.content}}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    
+
+
+{% endblock %}
+
+
